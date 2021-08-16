@@ -17,9 +17,11 @@
 		</div>
 	</nav>
 	<div class="container-fluid mt-5">
-		<h3>Bienvenue{{user.name}}</h3>
+		<h3>Bienvenue {{user.name}}</h3>
 		<div class="jumbotron">
-			recherche
+			<p>Trier par: <span><a class="btn btn-primary" href={{ path('user_index') }}>Titre</a>  <a class="btn btn-primary" href={{ path('user_index_year') }}>Année</a>  <a class="btn btn-primary" href={{ path('user_index_duration') }}>Durée</a></span>
+			Rechercher:
+			</p> 
 		</div>
 	</div>
 

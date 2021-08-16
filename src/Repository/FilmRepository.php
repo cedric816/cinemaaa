@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Film;
+use App\Entity\Sorting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -19,11 +20,12 @@ class FilmRepository extends ServiceEntityRepository
         parent::__construct($registry, Film::class);
     }
 
-    public function findAllQuery()
+    public function findAllQuery($key)
     {
         return $this->createQueryBuilder('f')
             ->andWhere('f.available = :val')
             ->setParameter('val', true)
+            ->orderBy('f.'.$key, 'ASC')
             ->getQuery();
     }
 
