@@ -3,7 +3,7 @@
 {% block body %}
 	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
 		<div class="container-fluid">
-			<a class="navbar-brand" href="#">TCHI TCHA</a>
+			<a class="navbar-brand" href={{ path('home_index') }}>TCHI TCHA</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 				<span class="navbar-toggler-icon"></span>
 			</button>
@@ -16,12 +16,36 @@
 			</div>
 		</div>
 	</nav>
-	<div class="container-fluid mt-5">
-		<h3>Bienvenue {{user.name}}</h3>
-		<div class="jumbotron">
-			<p>Trier par: <span><a class="btn btn-primary" href={{ path('user_index') }}>Titre</a>  <a class="btn btn-primary" href={{ path('user_index_year') }}>Année</a>  <a class="btn btn-primary" href={{ path('user_index_duration') }}>Durée</a></span>
-			Rechercher:
-			</p> 
+	<div class="container mt-5">
+		<div class="container">
+			{% if selectFilm is defined %}
+			<div class="jumbotron text-center mb-5 bg-info">
+				<p>Le film "<strong>{{selectFilm.title}}</strong>" a bien été ajouté à votre panier</p>
+			</div>
+			{% endif %}
+			<div class="row">
+				<div class="col-md-6">
+					<h3>Bienvenue
+						{{user.name}}</h3>
+					<p>Films disponibles</p>
+					<p>Trier par:
+						<span>
+							<a class="btn btn-primary" href={{ path('user_index') }}>Titre</a>
+							<a class="btn btn-primary" href={{ path('user_index_year') }}>Année</a>
+							<a class="btn btn-primary" href={{ path('user_index_duration') }}>Durée</a>
+						</span>
+					</p>
+				</div>
+				<div class="col-md-6">
+					<p>Rechercher dans le titre ou le résumé:</p>
+					{{form_start(form)}}
+					{{form_widget(form)}}
+					<input class="btn btn-primary mt-3" type="submit" value="Chercher">
+					<a class="btn btn-primary mt-3" href={{ path('user_index') }}>Réinitialiser</a>
+					{{form_end(form)}}
+				</div>
+			</div>
+
 		</div>
 	</div>
 
@@ -40,7 +64,11 @@
 								{{film.year}}
 								-
 								{{film.runtime}}min</p>
-							<a href="#" class="btn btn-primary">Emprunter</a>
+							<p class="card-text">
+								<strong>Quantité disponible:
+									{{film.quantity}}</strong>
+							</p>
+							<a href="{{ path('user_add_film', {id: film.id}) }}" class="btn btn-primary">Emprunter</a>
 						</div>
 					</div>
 				</div>

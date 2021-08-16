@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\FilmSearch;
 use App\Entity\Sorting;
+use App\Form\FilmSearchType;
 use App\Repository\FilmRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +25,11 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        $filmsQuery = $filmRepository->findAllQuery('title');
+        $search = new FilmSearch();
+        $form = $this->createForm(FilmSearchType::class, $search);
+        $form->handleRequest($request);
+
+        $filmsQuery = $filmRepository->findAllQuery('title', $search);
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
@@ -32,6 +38,7 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
             'user' => $user,
+            'form' => $form->createView()
         ]);
     }
 
@@ -42,7 +49,11 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        $filmsQuery = $filmRepository->findAllQuery('year');
+        $search = new FilmSearch();
+        $form = $this->createForm(FilmSearchType::class, $search);
+        $form->handleRequest($request);
+
+        $filmsQuery = $filmRepository->findAllQuery('year', $search);
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
@@ -51,6 +62,7 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
             'user' => $user,
+            'form' => $form->createView()
         ]);
     }
 
@@ -61,7 +73,11 @@ class UserController extends AbstractController
     {
         $user = $this->getUser();
 
-        $filmsQuery = $filmRepository->findAllQuery('runtime');
+        $search = new FilmSearch();
+        $form = $this->createForm(FilmSearchType::class, $search);
+        $form->handleRequest($request);
+
+        $filmsQuery = $filmRepository->findAllQuery('runtime', $search);
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
@@ -70,6 +86,37 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
             'user' => $user,
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/add/{id}", name="user_add_film")
+     */
+    public function add($id, FilmRepository $filmRepository, PaginatorInterface $paginator, Request $request): Response
+    {
+        $user = $this->getUser();
+
+        $search = new FilmSearch();
+        $form = $this->createForm(FilmSearchType::class, $search);
+        $form->handleRequest($request);
+
+        $filmsQuery = $filmRepository->findAllQuery('title', $search);
+        $pagination = $paginator->paginate(
+            $filmsQuery,
+            $request->query->getInt('page', 1),
+            3
+        );
+
+        $selectFilm = $filmRepository->find($id);
+        $quantity = $selectFilm->getQuantity();
+        $selectFilm->setQuantity($quantity-1);
+
+        return $this->render('user/index.html.twig', [
+            'pagination' => $pagination,
+            'user' => $user,
+            'form' => $form->createView(),
+            'selectFilm' => $selectFilm
         ]);
     }
 }

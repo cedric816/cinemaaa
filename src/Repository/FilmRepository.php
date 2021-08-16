@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Film;
+use App\Entity\FilmSearch;
 use App\Entity\Sorting;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -20,13 +21,25 @@ class FilmRepository extends ServiceEntityRepository
         parent::__construct($registry, Film::class);
     }
 
-    public function findAllQuery($key)
+    public function findAllQuery($key, FilmSearch $search)
     {
-        return $this->createQueryBuilder('f')
+        if ($search->getKeyWord()){
+            return $this->createQueryBuilder('f')
             ->andWhere('f.available = :val')
+            ->andWhere('f.quantity > 0')
+            ->andWhere('f.title LIKE :key OR f.plot LIKE :key')
+            ->setParameter('val', true)
+            ->setParameter('key', '%'.$search->getKeyWord().'%')
+            ->orderBy('f.'.$key, 'ASC')
+            ->getQuery();
+        } else {
+            return $this->createQueryBuilder('f')
+            ->andWhere('f.available = :val')
+            ->andWhere('f.quantity > 0')
             ->setParameter('val', true)
             ->orderBy('f.'.$key, 'ASC')
             ->getQuery();
+        }   
     }
 
     // /**
