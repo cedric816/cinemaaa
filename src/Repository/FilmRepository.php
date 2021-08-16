@@ -22,8 +22,9 @@ class FilmRepository extends ServiceEntityRepository
     public function findAllQuery()
     {
         return $this->createQueryBuilder('f')
-            ->getQuery()
-        ;
+            ->andWhere('f.available = :val')
+            ->setParameter('val', true)
+            ->getQuery();
     }
 
     // /**

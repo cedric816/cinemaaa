@@ -47,6 +47,11 @@ class Film
      */
     private $plot;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $available;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -120,6 +125,18 @@ class Film
     public function setPlot(?string $plot): self
     {
         $this->plot = $plot;
+
+        return $this;
+    }
+
+    public function getAvailable(): ?bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(bool $available): self
+    {
+        $this->available = $available;
 
         return $this;
     }
