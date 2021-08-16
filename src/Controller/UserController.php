@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Cart;
 use App\Entity\FilmSearch;
 use App\Entity\Sorting;
 use App\Form\FilmSearchType;
@@ -12,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Form\SortingType;
+use App\Repository\CartRepository;
 
 /**
  * @Route("/user")
@@ -93,30 +95,35 @@ class UserController extends AbstractController
     /**
      * @Route("/add/{id}", name="user_add_film")
      */
-    public function add($id, FilmRepository $filmRepository, PaginatorInterface $paginator, Request $request): Response
+    public function add($id, FilmRepository $filmRepository): Response
     {
-        $user = $this->getUser();
-
-        $search = new FilmSearch();
-        $form = $this->createForm(FilmSearchType::class, $search);
-        $form->handleRequest($request);
-
-        $filmsQuery = $filmRepository->findAllQuery('title', $search);
-        $pagination = $paginator->paginate(
-            $filmsQuery,
-            $request->query->getInt('page', 1),
-            3
-        );
 
         $selectFilm = $filmRepository->find($id);
         $quantity = $selectFilm->getQuantity();
         $selectFilm->setQuantity($quantity-1);
+        
 
-        return $this->render('user/index.html.twig', [
-            'pagination' => $pagination,
-            'user' => $user,
-            'form' => $form->createView(),
-            'selectFilm' => $selectFilm
+        $user = $this->getUser();
+        $cart = $user->getCarts();
+        $cart = $cart[0];
+        $cart->addFilm($selectFilm);
+
+        $this->getDoctrine()->getManager()->flush();
+
+        return $this->redirectToRoute('user_index');
+    }
+
+    /**
+     * @Route("/user/cart", name="user_cart")
+     */
+    public function cart(): Response
+    {
+        $user = $this->getUser();
+        $cart = $user->getCarts();
+        $cart = $cart[0];
+        $films = $cart->getFilms();
+        return $this->render('user/cart.html.twig', [
+            'films' => $films
         ]);
     }
 }
