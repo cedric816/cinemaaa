@@ -30,6 +30,11 @@ class Cart
      */
     private $films;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $isActive;
+
     public function __construct()
     {
         $this->films = new ArrayCollection();
@@ -75,6 +80,18 @@ class Cart
     public function removeFilm(Film $film): self
     {
         $this->films->removeElement($film);
+
+        return $this;
+    }
+
+    public function getIsActive(): ?bool
+    {
+        return $this->isActive;
+    }
+
+    public function setIsActive(bool $isActive): self
+    {
+        $this->isActive = $isActive;
 
         return $this;
     }

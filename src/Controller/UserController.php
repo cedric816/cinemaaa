@@ -3,8 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Cart;
+use App\Entity\Film;
 use App\Entity\FilmSearch;
-use App\Entity\Sorting;
 use App\Form\FilmSearchType;
 use App\Repository\FilmRepository;
 use Knp\Component\Pager\PaginatorInterface;
@@ -12,8 +12,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Form\SortingType;
-use App\Repository\CartRepository;
 
 /**
  * @Route("/user")
@@ -99,11 +97,11 @@ class UserController extends AbstractController
     {
 
         $user = $this->getUser();
-        $carts = $user->getCarts();
-        $cart = $carts[0];
+        $cart = $user->getActiveCart();
 
         if (is_null($cart)) {
             $cart = new Cart();
+            $cart->setIsActive(true);
             $user->addCart($cart);
             $this->getDoctrine()->getManager()->persist($cart);
             $this->getDoctrine()->getManager()->flush();
@@ -124,16 +122,16 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/user/cart", name="user_cart")
+     * @Route("/cart", name="user_cart")
      */
     public function cart(): Response
     {
         $user = $this->getUser();
-        $cart = $user->getCarts();
-        $cart = $cart[0];
+        $cart = $user->getActiveCart();
 
         if (is_null($cart)) {
             $cart = new Cart();
+            $cart->setIsActive(true);
             $user->addCart($cart);
             $this->getDoctrine()->getManager()->persist($cart);
             $this->getDoctrine()->getManager()->flush();
@@ -141,7 +139,39 @@ class UserController extends AbstractController
 
         $films = $cart->getFilms();
         return $this->render('user/cart.html.twig', [
-            'films' => $films
+            'films' => $films,
+            'cart' => $cart
         ]);
+    }
+
+    /**
+     * @Route("/cart/{id}", name="film_delete", methods={"POST"})
+     */
+    public function delete(Request $request, Film $film): Response
+    {
+        if ($this->isCsrfTokenValid('delete' . $film->getId(), $request->request->get('_token'))) {
+            $user = $this->getUser();
+            $cart = $user->getActiveCart();
+            $cart->removeFilm($film);
+            $quantity = $film->getQuantity();
+            $film->setQuantity($quantity + 1);
+            $manager = $this->getDoctrine()->getManager();
+            $manager->flush();
+        }
+
+        return $this->redirectToRoute('user_cart', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @Route("/cart/validation", name="cart_validation")
+     */
+    public function validation(): Response
+    {
+        $user = $this->getUser();
+        $cart = $user->getActiveCart();
+        $cart->setIsActive(false);
+        $manager = $this->getDoctrine()->getManager();
+        $manager->flush();
+        return $this->redirectToRoute('user_index');
     }
 }

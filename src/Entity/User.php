@@ -161,6 +161,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->carts;
     }
 
+    public function getActiveCart()
+    {
+        foreach($this->carts as $cart){
+            if ($cart->getIsActive()){
+                return $cart;
+            }
+        }
+    }
+
     public function addCart(Cart $cart): self
     {
         if (!$this->carts->contains($cart)) {

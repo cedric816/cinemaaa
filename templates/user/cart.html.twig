@@ -25,11 +25,25 @@
 		<a class="btn btn-primary" href={{ path('user_index') }}>Retour aux films</a>
 	</div>
 	<div class="container mt-5">
-		<ul>
+		<ul class="list-group">
 			{% for film in films %}
-				<li>{{film.title}}</li>
+				<li class="list-group-item">
+					<form method="post" action="{{ path('film_delete', {'id': film.id}) }}" onsubmit="return confirm('Etes-ous sûr de vouloir retirer {{film.title}} de votre panier?');">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
+						<button type="submit" class="btn-close" aria-label="Close"></button>
+					</form>
+					<p>
+						<h5>{{film.title}}</h5>
+						{{film.year}}
+						-
+						{{film.director}}</p>
+				</li>
 			{% endfor %}
 		</ul>
 	</div>
-
+	{% if cart.getFilms|length %}
+		<div class="container mt-2 d-flex justify-content-end">
+			<a class="btn btn-primary" href={{ path('cart_validation') }}>Valider mon panier</a>
+		</div>
+	{% endif %}
 {% endblock %}
