@@ -16,7 +16,7 @@ class FilmSearchType extends AbstractType
             ->add('keyWord', TextType::class, [
                 'label' => false,
                 'attr' => [
-                    'placeholder' => 'mot(s) clé(s)'
+                    'placeholder' => '🔎 mot(s) clé(s)'
                 ]
             ])
         ;

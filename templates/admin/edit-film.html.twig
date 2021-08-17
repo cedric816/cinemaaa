@@ -20,40 +20,12 @@
 		</div>
 	</nav>
 
-	<div class="container">
-		<table class="table">
-			<thead>
-				<tr>
-					<th scope="col">Titre</th>
-					<th scope="col">Année</th>
-					<th scope="col">Réalisateur</th>
-					<th scope="col">Stock</th>
-					<th scope="col">Disponible</th>
-					<th scope="col">Détails</th>
-				</tr>
-			</thead>
-			<tbody>
-				{% for film in films %}
-					<tr>
-						<th scope="row">{{film.title}}</th>
-						<td>{{film.year}}</td>
-						<td>{{film.director}}</td>
-						<td>{{film.quantity}}</td>
-						{% if film.getAvailable %}
-							<td class="text-success">
-								OUI
-							{% else %}
-								<td class="text-danger">
-									NON
-								{% endif %}
-							</td>
-							<td>
-								<a href={{ path('film_edit', {'id': film.id} ) }}>ℹ️</a>
-							</td>
-						</tr>
-					{% endfor %}
-				</tbody>
-			</tbody>
-		</table>
+	<div class="container mt-5 mb-5">
+    {% form_theme form 'bootstrap_5_layout.html.twig' %}
+		<h5>Modifier un film: {{film.title}}</h5>
+		{{ form_start(form) }}
+		{{ form_widget(form) }}
+		<input class="btn btn-primary" type="submit" value="enregistrer">
+		{{ form_end(form) }}
 	</div>
 {% endblock %}

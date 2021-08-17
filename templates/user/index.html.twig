@@ -22,30 +22,30 @@
 						<a class="nav-link" aria-current="page" href={{ path('app_logout') }}>Deconnexion</a>
 					</li>
 				</ul>
+				<div class="d-flex">
+					{{form_start(form)}}
+					{{form_widget(form)}}
+					<button class="btn btn-outline-success" type="submit">Chercher</button>
+					<a class="btn btn-outline-success" href={{ path('user_index') }}>Réinitialiser</a>
+					{{form_end(form)}}
+				</div>
 			</div>
 		</div>
 	</nav>
 
-	<div class="container mt-5">
-		<h5>Films disponibles</h5>
-	</div>
+	<div class="container mt-5"></div>
 	<div class="container mt-3">
 		<div class="row">
 			<div class="col-md-6">
-				<p>Trier par:</p>
-					<span>
-						<a class="btn btn-primary" href={{ path('user_index') }}>Titre</a>
-						<a class="btn btn-primary" href={{ path('user_index_year') }}>Année</a>
-						<a class="btn btn-primary" href={{ path('user_index_duration') }}>Durée</a>
-					</span>
-			</div>
-			<div class="col-md-6">
-				<div class="d-flex">
-					{{form_start(form)}}
-					🔎{{form_widget(form)}}
-					<input class="btn btn-primary mt-3" type="submit" value="Chercher">
-					<a class="btn btn-primary mt-3" href={{ path('user_index') }}>Réinitialiser</a>
-					{{form_end(form)}}
+				<div class="d-flex flex-column">
+					<h5>Films disponibles</h5>
+					<p>Trier par:
+						<span>
+							<a class="btn btn-primary" href={{ path('user_index') }}>Titre</a>
+							<a class="btn btn-primary" href={{ path('user_index_year') }}>Année</a>
+							<a class="btn btn-primary" href={{ path('user_index_duration') }}>Durée</a>
+						</span>
+					</p>
 				</div>
 			</div>
 		</div>
