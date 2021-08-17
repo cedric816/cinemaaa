@@ -60,13 +60,16 @@ class Cart
         return $this->films;
     }
 
-    public function addFilm(Film $film): self
+    public function addFilm(Film $film, Int $count)
     {
         if (!$this->films->contains($film)) {
+            $count = 1;
             $this->films[] = $film;
+        } else {
+            $count = 0;
         }
 
-        return $this;
+        return $count;
     }
 
     public function removeFilm(Film $film): self

@@ -98,17 +98,27 @@ class UserController extends AbstractController
     public function add($id, FilmRepository $filmRepository): Response
     {
 
-        $selectFilm = $filmRepository->find($id);
-        $quantity = $selectFilm->getQuantity();
-        $selectFilm->setQuantity($quantity-1);
-        
-
         $user = $this->getUser();
-        $cart = $user->getCarts();
-        $cart = $cart[0];
-        $cart->addFilm($selectFilm);
+        $carts = $user->getCarts();
+        $cart = $carts[0];
 
-        $this->getDoctrine()->getManager()->flush();
+        if (is_null($cart)) {
+            $cart = new Cart();
+            $user->addCart($cart);
+            $this->getDoctrine()->getManager()->persist($cart);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
+        $selectFilm = $filmRepository->find($id);
+
+        $count = 0;
+        $count = $cart->addFilm($selectFilm, $count);
+
+        if ($count == 1) {
+            $quantity = $selectFilm->getQuantity();
+            $selectFilm->setQuantity($quantity - 1);
+            $this->getDoctrine()->getManager()->flush();
+        }
 
         return $this->redirectToRoute('user_index');
     }
@@ -121,6 +131,14 @@ class UserController extends AbstractController
         $user = $this->getUser();
         $cart = $user->getCarts();
         $cart = $cart[0];
+
+        if (is_null($cart)) {
+            $cart = new Cart();
+            $user->addCart($cart);
+            $this->getDoctrine()->getManager()->persist($cart);
+            $this->getDoctrine()->getManager()->flush();
+        }
+
         $films = $cart->getFilms();
         return $this->render('user/cart.html.twig', [
             'films' => $films
