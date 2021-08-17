@@ -6,6 +6,7 @@ use App\Entity\Cart;
 use App\Entity\Film;
 use App\Entity\FilmSearch;
 use App\Form\FilmSearchType;
+use App\Repository\CartRepository;
 use App\Repository\FilmRepository;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +34,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -57,7 +58,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -81,7 +82,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -140,7 +141,7 @@ class UserController extends AbstractController
         $films = $cart->getFilms();
         return $this->render('user/cart.html.twig', [
             'films' => $films,
-            'cart' => $cart
+            'cart' => $cart,
         ]);
     }
 
@@ -173,5 +174,44 @@ class UserController extends AbstractController
         $manager = $this->getDoctrine()->getManager();
         $manager->flush();
         return $this->redirectToRoute('user_index');
+    }
+
+    /**
+     * @Route("/cart/history", name="cart_history")
+     */
+    public function history(): Response
+    {
+        $user = $this->getUser();
+        $carts = $user->getCarts();
+
+        return $this->render('user/history.html.twig', [
+            'carts' => $carts
+        ]);
+    }
+
+    /**
+     * @Route("/history/{id}", name="history_detail")
+     */
+    public function detail($id, CartRepository $cartRepo): Response
+    {
+        $cart = $cartRepo->find($id);
+        return $this->render('user/history-detail.html.twig', [
+            'cart' => $cart
+        ]);
+    }
+
+    /**
+     * @Route("return/{idCart}/{idFilm}", name="return_film")
+     */
+    public function return($idCart, $idFilm, CartRepository $cartRepo, FilmRepository $filmrepo): Response
+    {
+        $cart = $cartRepo->find($idCart);
+        $film = $filmrepo->find($idFilm);
+        $cart->removeFilm($film);
+        $quantity = $film->getQuantity();
+        $film->setQuantity($quantity+=1);
+        $manager = $this->getDoctrine()->getManager();
+        $manager->flush();
+        return $this->redirectToRoute('history_detail', ['id'=>$cart->getId()]);
     }
 }

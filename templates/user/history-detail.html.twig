@@ -13,10 +13,10 @@
 						<a class="nav-link" aria-current="page" href={{ path('user_index') }}>Les films</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href={{ path('user_cart') }}>Mon panier</a>
+						<a class="nav-link" aria-current="page" href={{ path('user_cart') }}>Mon panier</a>
 					</li>
 					<li class="nav-item">
-						<a class="nav-link" aria-current="page" href={{ path('cart_history') }}>Historique</a>
+						<a class="nav-link active" aria-current="page" href={{ path('cart_history') }}>Historique</a>
 					</li>
 					<li class="nav-item">
 						<a class="nav-link" aria-current="page" href={{ path('app_logout') }}>Deconnexion</a>
@@ -27,30 +27,30 @@
 	</nav>
 
 	<div class="container mt-5">
-		<h5>Mon panier</h5>
+		<h5>Détail de la réservation n°{{cart.id}}</h5>
 	</div>
+
 	<div class="container mt-5">
 		<ul class="list-group">
-			{% for film in films %}
+			{% for film in cart.films  %}
 				<li class="list-group-item">
+
 					<div class="d-flex justify-content-between">
-						<img src={{film.poster}} alt="affiche du film" height="80px">
-						<h5>{{film.title}}</h5>
-						<p>{{film.year}}
-							-
-							{{film.director}}</p>
-						<form method="post" action="{{ path('film_delete', {'id': film.id}) }}" onsubmit="return confirm('Etes-ous sûr de vouloir retirer {{film.title}} de votre panier?');">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
-							<button type="submit" class="btn-close" aria-label="Close"></button>
-						</form>
+						<div>
+							<img src={{film.poster}} alt="affiche du film" height="80px">
+						</div>
+						<div>
+							<strong>{{film.title}}</strong>
+							<p>{{film.year}}
+								-
+								{{film.director}}</p>
+						</div>
+						<div>
+							<a href={{ path('return_film', {'idCart':cart.id, 'idFilm':film.id} ) }} class="btn btn-success" onclick="return confirm('Etes-ous sûr de vouloir rendre {{film.title}}?');">Rendre ce film</a>
+						</div>
 					</div>
 				</li>
 			{% endfor %}
 		</ul>
 	</div>
-	{% if cart.getFilms|length %}
-		<div class="container mt-2 d-flex justify-content-end">
-			<a class="btn btn-primary" href={{ path('cart_validation') }}>Valider mon panier</a>
-		</div>
-	{% endif %}
 {% endblock %}

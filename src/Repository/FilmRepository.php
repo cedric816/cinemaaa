@@ -42,6 +42,16 @@ class FilmRepository extends ServiceEntityRepository
         }   
     }
 
+    public function findLatest()
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.id', 'DESC')
+            ->setMaxResults(3)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Film[] Returns an array of Film objects
     //  */
