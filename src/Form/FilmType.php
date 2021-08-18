@@ -12,7 +12,7 @@ class FilmType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title')
+            // ->add('title')
             ->add('year')
             ->add('runtime')
             ->add('director')

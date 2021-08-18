@@ -47,9 +47,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $carts;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Film::class, mappedBy="users")
+     */
+    private $films;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Film::class)
+     */
+    private $filmsNotRender;
+
     public function __construct()
     {
         $this->carts = new ArrayCollection();
+        $this->films = new ArrayCollection();
+        $this->filmsNotRender = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -188,6 +200,57 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
                 $cart->setUser(null);
             }
         }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Film[]
+     */
+    public function getFilms(): Collection
+    {
+        return $this->films;
+    }
+
+    public function addFilm(Film $film): self
+    {
+        if (!$this->films->contains($film)) {
+            $this->films[] = $film;
+            $film->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFilm(Film $film): self
+    {
+        if ($this->films->removeElement($film)) {
+            $film->removeUser($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Film[]
+     */
+    public function getFilmsNotRender(): Collection
+    {
+        return $this->filmsNotRender;
+    }
+
+    public function addFilmsNotRender(Film $filmsNotRender): self
+    {
+        if (!$this->filmsNotRender->contains($filmsNotRender)) {
+            $this->filmsNotRender[] = $filmsNotRender;
+        }
+
+        return $this;
+    }
+
+    public function removeFilmsNotRender(Film $filmsNotRender): self
+    {
+        $this->filmsNotRender->removeElement($filmsNotRender);
 
         return $this;
     }

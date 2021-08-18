@@ -34,7 +34,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            6
+            3
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -58,7 +58,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            6
+            3
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -82,7 +82,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            6
+            3
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -171,6 +171,12 @@ class UserController extends AbstractController
         $user = $this->getUser();
         $cart = $user->getActiveCart();
         $cart->setIsActive(false);
+
+        $films = $cart->getFilms();
+        foreach ($films as $film){
+            $user->addFilmsNotRender($film);
+        }
+
         $manager = $this->getDoctrine()->getManager();
         $manager->flush();
         return $this->redirectToRoute('user_index');
@@ -205,11 +211,15 @@ class UserController extends AbstractController
      */
     public function return($idCart, $idFilm, CartRepository $cartRepo, FilmRepository $filmrepo): Response
     {
+        $user = $this->getUser();
         $cart = $cartRepo->find($idCart);
         $film = $filmrepo->find($idFilm);
         $cart->removeFilm($film);
+        $user->removeFilmsNotRender($film);
+        $user->addFilm($film);
         $quantity = $film->getQuantity();
         $film->setQuantity($quantity+=1);
+        $user->addFilm($film);
         $manager = $this->getDoctrine()->getManager();
         $manager->flush();
         return $this->redirectToRoute('history_detail', ['id'=>$cart->getId()]);

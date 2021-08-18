@@ -20,7 +20,8 @@
 		</div>
 	</nav>
 
-	<div class="container">
+	<div class="container mt-5">
+		<h5>Les films référencés</h5>
 		<table class="table">
 			<thead>
 				<tr>
@@ -29,7 +30,7 @@
 					<th scope="col">Réalisateur</th>
 					<th scope="col">Stock</th>
 					<th scope="col">Disponible</th>
-					<th scope="col">Détails</th>
+					<th scope="col">Actions</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -48,12 +49,34 @@
 								{% endif %}
 							</td>
 							<td>
-								<a href={{ path('film_edit', {'id': film.id} ) }}>ℹ️</a>
+								<div class="d-flex">
+									<a href={{ path('info_film', {'id':film.id}) }}>
+										<button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Infos utilisateurs">
+											ℹ️
+										</button>
+									</a>
+									<p class="text-white">_</p>
+									<a href={{ path('film_edit', {'id': film.id} ) }}>
+										<button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Modifier">
+											✍
+										</button>
+									</a>
+									<p class="text-white">_</p>
+									<form method="post" action="{{ path('admin_film_delete', {'id': film.id}) }}" onsubmit="return confirm('Supprimer définitivement le film {{film.title}}?');">
+										<input type="hidden" name="_token" value="{{ csrf_token('delete' ~ film.id) }}">
+										<button type="submit" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Supprimer">
+											❌
+										</button>
+									</form>
+								</div>
 							</td>
 						</tr>
 					{% endfor %}
 				</tbody>
 			</tbody>
 		</table>
+		<div class="d-flex mt-2 mb-5 justify-content-end">
+			<a class="btn btn-primary" href="#">Nouveau film</a>
+		</div>
 	</div>
 {% endblock %}

@@ -45,4 +45,32 @@ class AdminController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+    /**
+     * @Route("/delete/{id}", name="admin_film_delete", methods={"POST"})
+     */
+    public function delete(Request $request, Film $film): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->request->get('_token'))) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($film);
+            $entityManager->flush();
+        }
+
+        return $this->redirectToRoute('admin_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * @Route("/info/{id}", name="info_film")
+     */
+    public function info($id, FilmRepository $filmRepo): Response
+    {
+        
+        $film = $filmRepo->find($id);
+        $users = $film->getUsers();
+        return $this->render('admin/info-film.html.twig', [
+            'film' => $film,
+            'users' => $users
+        ]);
+    }
 }

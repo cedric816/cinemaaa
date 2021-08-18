@@ -1,0 +1,39 @@
+{% extends "base.html.twig" %}
+
+{% block body %}
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+		<div class="container-fluid">
+			<a class="navbar-brand" href={{ path('home_index') }}>TCHI TCHA</a>
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					<li class="nav-item">
+						<a class="nav-link active" aria-current="page" href={{ path('admin_index') }}>Les films</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href={{ path('app_logout') }}>Deconnexion</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container mt-5">
+		<h5>Infos concernant le film
+			<strong>{{film.title}}</strong>
+		</h5>
+		<p>liste des utilisateurs ayant déjà emprunté et rendu ce film:</p>
+		<ul class="list-group">
+			{% for user in users %}
+				<li class="list-group-item">{{user.name}}
+					-
+					{{user.email}}</li>
+			{% endfor %}
+		</ul>
+	</div>
+	<div class="container mt-5">
+		<p>liste des utilisateurs ayant un emprunt en cours pour ce film:</p>
+	</div>
+{% endblock %}
