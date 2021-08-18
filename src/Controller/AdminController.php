@@ -30,6 +30,17 @@ class AdminController extends AbstractController
     }
 
     /**
+     * @Route("/alphabetique", name="admin_index_alpha")
+     */
+    public function indexAlpha(FilmRepository $filmRepo): Response
+    {
+        $films = $filmRepo->findAllByAlpha();
+        return $this->render('admin/index.html.twig', [
+            'films' => $films
+        ]);
+    }
+
+    /**
      * @Route("/edit/{id}", name="film_edit")
      */
     public function edit(Film $film, Request $request): Response

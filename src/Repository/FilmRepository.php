@@ -52,6 +52,15 @@ class FilmRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findAllByAlpha()
+    {
+        return $this->createQueryBuilder('f')
+            ->orderBy('f.title', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Film[] Returns an array of Film objects
     //  */
