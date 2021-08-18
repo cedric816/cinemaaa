@@ -70,7 +70,14 @@
 								<strong>Quantité disponible:
 									{{film.quantity}}</strong>
 							</p>
-							<a href="{{ path('user_add_film', {id: film.id}) }}" class="btn btn-primary">Emprunter</a>
+							<a href="{{ path('user_add_film', {id: film.id}) }}" class="btn btn-primary">
+								Emprunter
+								{% for currentFilm in currentFilms %}
+									{% if currentFilm.id == film.id %}
+										<span class="badge bg-info">Emprunt en cours</span>
+									{% endif %}
+								{% endfor %}
+							</a>
 						</div>
 					</div>
 				</div>

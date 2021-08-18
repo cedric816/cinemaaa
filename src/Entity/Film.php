@@ -69,10 +69,16 @@ class Film
      */
     private $users;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=User::class, inversedBy="currentFilms")
+     */
+    private $currentUsers;
+
     public function __construct()
     {
         $this->carts = new ArrayCollection();
         $this->users = new ArrayCollection();
+        $this->currentUsers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -227,6 +233,30 @@ class Film
     public function removeUser(User $user): self
     {
         $this->users->removeElement($user);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|User[]
+     */
+    public function getCurrentUsers(): Collection
+    {
+        return $this->currentUsers;
+    }
+
+    public function addCurrentUser(User $currentUser): self
+    {
+        if (!$this->currentUsers->contains($currentUser)) {
+            $this->currentUsers[] = $currentUser;
+        }
+
+        return $this;
+    }
+
+    public function removeCurrentUser(User $currentUser): self
+    {
+        $this->currentUsers->removeElement($currentUser);
 
         return $this;
     }

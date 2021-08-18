@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Film;
 use App\Form\FilmType;
 use App\Repository\FilmRepository;
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -63,13 +64,27 @@ class AdminController extends AbstractController
     /**
      * @Route("/info/{id}", name="info_film")
      */
-    public function info($id, FilmRepository $filmRepo): Response
-    {
-        
+    public function info($id, FilmRepository $filmRepo, UserRepository $userRepo): Response
+    {      
         $film = $filmRepo->find($id);
         $users = $film->getUsers();
+
+        $allUsers = $userRepo -> findAll();
+       
         return $this->render('admin/info-film.html.twig', [
             'film' => $film,
+            'users' => $users,
+            'allUsers' => $allUsers
+        ]);
+    }
+
+    /**
+     * @Route("/user", name="admin_user")
+     */
+    public function user(UserRepository $userRepo): Response
+    {
+        $users = $userRepo -> findAll();
+        return $this->render('admin/user.html.twig', [
             'users' => $users
         ]);
     }

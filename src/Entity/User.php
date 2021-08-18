@@ -57,11 +57,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $filmsNotRender;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Film::class, mappedBy="currentUsers")
+     */
+    private $currentFilms;
+
     public function __construct()
     {
         $this->carts = new ArrayCollection();
         $this->films = new ArrayCollection();
         $this->filmsNotRender = new ArrayCollection();
+        $this->currentFilms = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -251,6 +257,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeFilmsNotRender(Film $filmsNotRender): self
     {
         $this->filmsNotRender->removeElement($filmsNotRender);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Film[]
+     */
+    public function getCurrentFilms(): Collection
+    {
+        return $this->currentFilms;
+    }
+
+    public function addCurrentFilm(Film $currentFilm): self
+    {
+        if (!$this->currentFilms->contains($currentFilm)) {
+            $this->currentFilms[] = $currentFilm;
+            $currentFilm->addCurrentUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCurrentFilm(Film $currentFilm): self
+    {
+        if ($this->currentFilms->removeElement($currentFilm)) {
+            $currentFilm->removeCurrentUser($this);
+        }
 
         return $this;
     }

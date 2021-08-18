@@ -30,6 +30,8 @@ class UserController extends AbstractController
         $form = $this->createForm(FilmSearchType::class, $search);
         $form->handleRequest($request);
 
+        $currentFilms = $user -> getFilmsNotRender();
+
         $filmsQuery = $filmRepository->findAllQuery('title', $search);
         $pagination = $paginator->paginate(
             $filmsQuery,
@@ -39,7 +41,8 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
             'user' => $user,
-            'form' => $form->createView()
+            'form' => $form->createView(),
+            'currentFilms' => $currentFilms
         ]);
     }
 
