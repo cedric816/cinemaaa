@@ -27,6 +27,13 @@ class FilmType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Film::class,
+            'method' => 'get',
+            'csrf_protection' => false
         ]);
+    }
+
+    public function getBlockPrefix()
+    {
+        return "";
     }
 }

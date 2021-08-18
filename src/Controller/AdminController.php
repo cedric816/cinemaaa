@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\Film;
+use App\Entity\FilmSearch;
+use App\Form\FilmSearchType;
 use App\Form\FilmType;
 use App\Repository\FilmRepository;
 use App\Repository\UserRepository;
@@ -21,7 +23,7 @@ class AdminController extends AbstractController
      */
     public function index(FilmRepository $filmRepo): Response
     {
-        $films = $filmRepo -> findAll();
+        $films = $filmRepo->findAll();
         return $this->render('admin/index.html.twig', [
             'films' => $films
         ]);
@@ -52,7 +54,7 @@ class AdminController extends AbstractController
      */
     public function delete(Request $request, Film $film): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$film->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $film->getId(), $request->request->get('_token'))) {
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->remove($film);
             $entityManager->flush();
@@ -65,12 +67,12 @@ class AdminController extends AbstractController
      * @Route("/info/{id}", name="info_film")
      */
     public function info($id, FilmRepository $filmRepo, UserRepository $userRepo): Response
-    {      
+    {
         $film = $filmRepo->find($id);
         $users = $film->getUsers();
 
-        $allUsers = $userRepo -> findAll();
-       
+        $allUsers = $userRepo->findAll();
+
         return $this->render('admin/info-film.html.twig', [
             'film' => $film,
             'users' => $users,
@@ -83,9 +85,108 @@ class AdminController extends AbstractController
      */
     public function user(UserRepository $userRepo): Response
     {
-        $users = $userRepo -> findAll();
+        $users = $userRepo->findAll();
         return $this->render('admin/user.html.twig', [
             'users' => $users
+        ]);
+    }
+
+    /**
+     * @Route("/new/film", name="new_film", methods={"GET"})
+     */
+    public function new(Request $request): Response
+    {
+        $search = new FilmSearch();
+        $form = $this->createForm(FilmSearchType::class, $search);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            $url = 'http://www.omdbapi.com/?apikey=4f1d0ddb&t=';
+            $keyWords = $search->getKeyWord();
+            $keyWords = urlencode($keyWords);
+            $url .= $keyWords;
+
+            $curl = curl_init();
+
+            //on définit plusieurs options en une seule fois à la différence de curl_setopt()
+            curl_setopt_array($curl, array(
+                CURLOPT_URL => $url,
+                CURLOPT_RETURNTRANSFER => true, //le résultat sera sauvegardé dans la variable $response ci-dessous
+                CURLOPT_TIMEOUT => 10, //nb de secondes à attendre avant abandon
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => "GET",
+                CURLOPT_HTTPHEADER => array(
+                    "cache-control: no-cache"
+                ),
+            ));
+
+            $response = curl_exec($curl);
+            $response = json_decode($response, true); //true en second argument indique qu'on veut un tableau associatif
+            //on recupere uniquement le nom de l'aliment 
+            $title = $response['Title'];
+            $year = $response['Year'];
+            $runtime = $response['Runtime'];
+            $director = $response['Director'];
+            $poster = $response['Poster'];
+            $plot = $response['Plot'];
+
+            $film = new Film();
+            $film->setTitle($title);
+            $film->setYear(intval($year));
+            $film->setRuntime(intval($runtime));
+            $film->setDirector($director);
+            $film->setPoster($poster);
+            $film->setPlot($plot);
+
+            dump($film);
+
+            $this->container->get('session')->set('film', $film);
+            return $this->redirectToRoute('confirm_new_film');
+
+
+            // $formFilm = $this->createForm(FilmType::class, $film);
+            // $formFilm->handleRequest($request);
+
+            // if ($formFilm->isSubmitted() and $formFilm->isValid()){
+            //     $manager = $this->getDoctrine()->getManager();
+            //     $manager->persist($film);
+            //     $manager->flush();
+            // }
+
+            // return $this->render('admin/new-film.html.twig', [
+            //     'formFilm' => $formFilm->createView(),
+            //     'form' => $form->createView()
+            // ]);
+        }
+
+        return $this->render('admin/new-film.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+
+    /**
+     * @Route("/new/film/confirm", name="confirm_new_film", methods={"GET"})
+     */
+    public function confirm(Request $request): Response
+    {
+        $film = $this->container->get('session')->get('film');
+        if ($film === null || !$film instanceof Film) {
+            return $this->createNotFoundException();
+        }
+        $form = $this->createForm(FilmType::class, $film);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $manager->persist($film);
+            $manager->flush();
+
+            return $this->redirectToRoute('admin_index');
+        }
+
+        return $this->render('admin/confirm-new-film.html.twig', [
+            'form' => $form->createView(),
+            'film' => $film
         ]);
     }
 }

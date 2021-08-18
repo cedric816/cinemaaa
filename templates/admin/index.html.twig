@@ -24,6 +24,9 @@
 	</nav>
 
 	<div class="container mt-5">
+		<div class="d-flex mt-2 mb-5 justify-content-end">
+			<a class="btn btn-primary" href={{ path('new_film') }}>Nouveau film</a>
+		</div>
 		<h5>Les films référencés</h5>
 		<table class="table">
 			<thead>
@@ -53,7 +56,7 @@
 							</td>
 							<td>
 								<div class="d-flex">
-									<a href={{ path('info_film', {'id':film.id}) }}>
+									<a href={{ path('info_film', {'id':film.id} ) }}>
 										<button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Infos utilisateurs">
 											ℹ️
 										</button>
@@ -78,8 +81,5 @@
 				</tbody>
 			</tbody>
 		</table>
-		<div class="d-flex mt-2 mb-5 justify-content-end">
-			<a class="btn btn-primary" href="#">Nouveau film</a>
-		</div>
 	</div>
 {% endblock %}

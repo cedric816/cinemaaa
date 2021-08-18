@@ -23,31 +23,22 @@
 		</div>
 	</nav>
 
-	<div class="container mt-5">
-		<h5>Infos concernant le film
-			<strong>{{film.title}}</strong>
-		</h5>
-		<p class="bg-primary text-white">liste des utilisateurs ayant déjà emprunté et rendu ce film:</p>
-		<ul class="list-group">
-			{% for user in users %}
-				<li class="list-group-item">{{user.name}}
-					-
-					{{user.email}}</li>
-			{% endfor %}
-		</ul>
-	</div>
-	<div class="container mt-5">
-		<p class="bg-primary text-white">liste des utilisateurs ayant un emprunt en cours pour ce film:</p>
-		<ul class="list-group">
-			{% for oneUser in allUsers %}
-				{% for oneFilm in oneUser.FilmsNotRender %}
-					{% if oneFilm.id == film.id %}
-						<li class="list-group-item">
-						{{oneUser.name}} - {{oneUser.email}}
-						</li>
-					{% endif %}
-				{% endfor %}
-			{% endfor %}
-		</ul>
-	</div>
+	{% if form is defined %}
+		<div class="container mt-5">
+			<h5>Créer un nouveau film - recherche par titre</h5>
+			{{form_start(form)}}
+			{{form_widget(form)}}
+            <button class="btn btn-primary">Rechercher</button>
+			{{form_end(form)}}
+		</div>
+	{% endif %}
+
+	{% if formFilm is defined %}
+		<div class="container mb-5">
+			{{form_start(formFilm)}}
+            {{form_widget(formFilm)}}
+            <button class="btn btn-primary">Créer ce film</button>
+            {{form_end(formFilm)}}
+		</div>
+	{% endif %}
 {% endblock %}
