@@ -20,6 +20,7 @@ class FilmType extends AbstractType
             ->add('plot')
             ->add('available')
             ->add('quantity')
+            ->add('startQuantity')
         ;
     }
 

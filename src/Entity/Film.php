@@ -72,7 +72,12 @@ class Film
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="currentFilms")
      */
-    private $currentUsers;
+    // private $currentUsers;
+
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $startQuantity;
 
     public function __construct()
     {
@@ -257,6 +262,18 @@ class Film
     public function removeCurrentUser(User $currentUser): self
     {
         $this->currentUsers->removeElement($currentUser);
+
+        return $this;
+    }
+
+    public function getStartQuantity(): ?int
+    {
+        return $this->startQuantity;
+    }
+
+    public function setStartQuantity(int $startQuantity): self
+    {
+        $this->startQuantity = $startQuantity;
 
         return $this;
     }

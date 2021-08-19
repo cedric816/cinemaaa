@@ -34,13 +34,11 @@
 		<ul class="list-group">
 			{% for cart in carts  %}
 				{% if cart.isActive %}
+				{# if current cart => not display #}
 					{% else %}
 						<li class="list-group-item">
 							<strong>Réservation n°{{cart.id}} -
-								<span>Statut:
-									{% if cart.isActive %}En cours -
-										{% else %}Validé
-									{% endif %}
+								<span>Statut: Validé
 								</span>
 							</strong>
 							{% if cart.films|length %}

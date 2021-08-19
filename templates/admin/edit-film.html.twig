@@ -24,11 +24,20 @@
 	</nav>
 
 	<div class="container mt-5 mb-5">
-    {% form_theme form 'bootstrap_5_layout.html.twig' %}
-		<h5>Modifier un film: {{film.title}}</h5>
-		{{ form_start(form) }}
-		{{ form_widget(form) }}
-		<input class="btn btn-primary" type="submit" value="enregistrer">
-		{{ form_end(form) }}
+		<div class="row">
+			<div class="col-md-6">
+				{% form_theme form 'bootstrap_5_layout.html.twig' %}
+				<h5>Modifier un film:
+					{{film.title}}</h5>
+				{{ form_start(form) }}
+				{{ form_widget(form) }}
+				<input class="btn btn-primary" type="submit" value="enregistrer">
+				{{ form_end(form) }}
+			</div>
+			<div class="col-md-6 mt-5">
+				<img src={{film.poster}} alt="affiche du film {{film.title}}">
+			</div>
+		</div>
+
 	</div>
 {% endblock %}

@@ -25,11 +25,15 @@
 
 	{% if form is defined %}
 		<div class="container mt-5">
-			<h5>Création du film {{film.title}}:</h5>
+			<h5>Création du film "{{film.title}}":</h5>
 			{{form_start(form)}}
 			{{form_widget(form)}}
-            <button class="btn btn-primary">Créer</button>
-			{{form_end(form)}}
+			<div class="d-flex">
+				<button class="btn btn-primary">Créer</button>
+				{{form_end(form)}}
+				<p class="text-white"> - </p>
+				<a class="btn btn-primary" href={{ path('new_film') }}>Annuler</a>
+			</div>
 		</div>
 	{% endif %}
 {% endblock %}
