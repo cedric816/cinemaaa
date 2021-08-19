@@ -40,7 +40,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -67,7 +67,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -94,7 +94,7 @@ class UserController extends AbstractController
         $pagination = $paginator->paginate(
             $filmsQuery,
             $request->query->getInt('page', 1),
-            3
+            6
         );
         return $this->render('user/index.html.twig', [
             'pagination' => $pagination,
@@ -114,7 +114,7 @@ class UserController extends AbstractController
         $params = $paramRepo->find(1);
 
         if ($user->isMaxBorrow($paramRepo)) {
-            $message = 'Vous avez atteint le nombre maximum d\'emprunts possibles ('.$params->getMaxBorrowByUser().'); pour emprunter à nouveau, vous devez rendre des films';
+            $message = 'ℹ️ Vous avez atteint le nombre maximum d\'emprunts possibles ('.$params->getMaxBorrowByUser().'); pour emprunter à nouveau, vous devez rendre des films';
             $search = new FilmSearch();
             $form = $this->createForm(FilmSearchType::class, $search);
             $form->handleRequest($request);
@@ -125,7 +125,7 @@ class UserController extends AbstractController
             $pagination = $paginator->paginate(
                 $filmsQuery,
                 $request->query->getInt('page', 1),
-                3
+                6
             );
             return $this->render('user/index.html.twig', [
                 'pagination' => $pagination,
@@ -147,7 +147,7 @@ class UserController extends AbstractController
         }
 
         if ($cart->getFilms()->count() >= $params->getMaxFilmByBorrow()){
-            $message = 'Vous avez atteint le nombre maximum de films pour un emprunt ('.$params->getMaxFilmByBorrow().')';
+            $message = 'ℹ️ Vous avez atteint le nombre maximum de films pour un emprunt ('.$params->getMaxFilmByBorrow().')';
             $search = new FilmSearch();
             $form = $this->createForm(FilmSearchType::class, $search);
             $form->handleRequest($request);
@@ -158,7 +158,7 @@ class UserController extends AbstractController
             $pagination = $paginator->paginate(
                 $filmsQuery,
                 $request->query->getInt('page', 1),
-                3
+                6
             );
             return $this->render('user/index.html.twig', [
                 'pagination' => $pagination,
