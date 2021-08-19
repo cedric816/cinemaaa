@@ -33,6 +33,10 @@
 		</div>
 	</nav>
 
+	{% if message is defined %}
+		<div class="container bg-info mt-5">{{message}}</div>
+	{% endif %}
+
 	<div class="container mt-5"></div>
 	<div class="container mt-3">
 		<div class="row">

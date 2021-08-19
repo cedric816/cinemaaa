@@ -6,7 +6,9 @@ use App\Entity\Film;
 use App\Entity\FilmSearch;
 use App\Form\FilmSearchType;
 use App\Form\FilmType;
+use App\Form\ParamsType;
 use App\Repository\FilmRepository;
+use App\Repository\ParamsRepository;
 use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -136,7 +138,7 @@ class AdminController extends AbstractController
 
             $response = curl_exec($curl);
             $response = json_decode($response, true); //true en second argument indique qu'on veut un tableau associatif
-            //on recupere uniquement le nom de l'aliment 
+
             $title = $response['Title'];
             $year = $response['Year'];
             $runtime = $response['Runtime'];
@@ -152,26 +154,28 @@ class AdminController extends AbstractController
             $film->setPoster($poster);
             $film->setPlot($plot);
 
-            dump($film);
+            curl_close($curl);
 
             $this->container->get('session')->set('film', $film);
             return $this->redirectToRoute('confirm_new_film');
-
-
-            // $formFilm = $this->createForm(FilmType::class, $film);
-            // $formFilm->handleRequest($request);
-
-            // if ($formFilm->isSubmitted() and $formFilm->isValid()){
-            //     $manager = $this->getDoctrine()->getManager();
-            //     $manager->persist($film);
-            //     $manager->flush();
-            // }
-
-            // return $this->render('admin/new-film.html.twig', [
-            //     'formFilm' => $formFilm->createView(),
-            //     'form' => $form->createView()
-            // ]);
         }
+
+
+
+        // $formFilm = $this->createForm(FilmType::class, $film);
+        // $formFilm->handleRequest($request);
+
+        // if ($formFilm->isSubmitted() and $formFilm->isValid()){
+        //     $manager = $this->getDoctrine()->getManager();
+        //     $manager->persist($film);
+        //     $manager->flush();
+        // }
+
+        // return $this->render('admin/new-film.html.twig', [
+        //     'formFilm' => $formFilm->createView(),
+        //     'form' => $form->createView()
+        // ]);
+
 
         return $this->render('admin/new-film.html.twig', [
             'form' => $form->createView()
@@ -201,6 +205,26 @@ class AdminController extends AbstractController
         return $this->render('admin/confirm-new-film.html.twig', [
             'form' => $form->createView(),
             'film' => $film
+        ]);
+    }
+
+    /**
+     * @Route("/params", name="admin_params")
+     */
+    public function params(Request $request, ParamsRepository $paramsRepo): Response
+    {
+        $params = $paramsRepo->find(1);
+        $form = $this->createForm(ParamsType::class, $params);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() and $form->isValid()) {
+            $manager = $this->getDoctrine()->getManager();
+            $manager->flush();
+            return $this->redirectToRoute('admin_index');
+        }
+
+        return $this->render('admin/params.html.twig', [
+            'form' => $form->createView()
         ]);
     }
 }

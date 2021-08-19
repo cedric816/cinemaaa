@@ -27,45 +27,12 @@
 	</nav>
 
 	<div class="container mt-5">
-		<h5>Infos concernant le film
-			<strong>{{film.title}}</strong>
-		</h5>
-		<p class="bg-primary text-white">liste des utilisateurs ayant déjà emprunté et rendu ce film:</p>
-		<ul class="list-group">
-			{% for user in users %}
-				<li class="list-group-item">{{user.name}}
-					-
-					{{user.email}}</li>
-			{% endfor %}
-		</ul>
-	</div>
-	<div class="container mt-5">
-		<p class="bg-primary text-white">liste des utilisateurs ayant un emprunt en cours pour ce film:</p>
-		<ul class="list-group">
-			{% for borrow in borrows %}
-				{% if  borrow.dateFinish < date()%}
-					<li class="list-group-item">
-						<p class="text-danger">
-							{{borrow.user.name}}
-							-
-							{{borrow.user.email}}
-							-  à rendre pour le:
-							{{borrow.dateFinish|date("d/m/Y")}}<span>
-								-
-								<a href="#" class="btn btn-danger">Contacter l'utilisateur</a>
-							</span>
-						</p>
-					</li>
-				{% else %}
-					<li class="list-group-item bg-success">
-						{{borrow.user.name}}
-						-
-						{{borrow.user.email}}
-						- à rendre pour le:
-						{{borrow.dateFinish|date("d/m/Y")}}
-					</li>
-				{% endif %}
-			{% endfor %}
-		</ul>
-	</div>
-{% endblock %}
+		<div class="row">
+			<div class="col-md-6">
+				<h5>Paramètres de l'appli</h5>
+				{{form_start(form)}}
+				{{form_widget(form)}}
+				<button class="btn btn-primary">Mettre à jour les paramètres</button>
+				{{form_end(form)}}
+			</div>
+		{% endblock %}

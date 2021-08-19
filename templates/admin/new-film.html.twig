@@ -16,12 +16,19 @@
 						<a class="nav-link" aria-current="page" href={{ path('admin_user') }}>Utilisateurs</a>
 					</li>
 					<li class="nav-item">
+						<a class="nav-link" aria-current="page" href={{ path('admin_params') }}>Paramètres</a>
+					</li>
+					<li class="nav-item">
 						<a class="nav-link" aria-current="page" href={{ path('app_logout') }}>Deconnexion</a>
 					</li>
 				</ul>
 			</div>
 		</div>
 	</nav>
+
+	{% if message is defined %}
+		<div class="container bg-info mt-5 d-flex justify-content-center">{{message}}</div>
+	{% endif %}
 
 	{% if form is defined %}
 		<div class="container mt-5">

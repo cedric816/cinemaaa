@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Repository\ParamsRepository;
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -187,8 +188,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getActiveCart()
     {
-        foreach($this->carts as $cart){
-            if ($cart->getIsActive()){
+        foreach ($this->carts as $cart) {
+            if ($cart->getIsActive()) {
                 return $cart;
             }
         }
@@ -322,5 +323,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    public function isMaxBorrow($paramRepo)
+    {
+        $params = $paramRepo->find(1);
+        $borrows = $this->getBorrows();
+        $count = 0;
+
+        foreach ($borrows as $borrow){
+            if ($borrow->getFilms()->count() > 0){
+                $count ++;
+            }
+        }
+
+        if ($count >= $params->getMaxBorrowByUser()){
+            return true;
+        }else{
+            return false;
+        }
     }
 }

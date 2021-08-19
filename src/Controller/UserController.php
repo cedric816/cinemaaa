@@ -9,6 +9,7 @@ use App\Entity\FilmSearch;
 use App\Form\FilmSearchType;
 use App\Repository\BorrowRepository;
 use App\Repository\FilmRepository;
+use App\Repository\ParamsRepository;
 use DateInterval;
 use DateTime;
 use Knp\Component\Pager\PaginatorInterface;
@@ -33,7 +34,7 @@ class UserController extends AbstractController
         $form = $this->createForm(FilmSearchType::class, $search);
         $form->handleRequest($request);
 
-        $currentFilms = $user -> getFilmsNotRender();
+        $currentFilms = $user->getFilmsNotRender();
 
         $filmsQuery = $filmRepository->findAllQuery('title', $search);
         $pagination = $paginator->paginate(
@@ -60,7 +61,7 @@ class UserController extends AbstractController
         $form = $this->createForm(FilmSearchType::class, $search);
         $form->handleRequest($request);
 
-        $currentFilms = $user -> getFilmsNotRender();
+        $currentFilms = $user->getFilmsNotRender();
 
         $filmsQuery = $filmRepository->findAllQuery('year', $search);
         $pagination = $paginator->paginate(
@@ -87,7 +88,7 @@ class UserController extends AbstractController
         $form = $this->createForm(FilmSearchType::class, $search);
         $form->handleRequest($request);
 
-        $currentFilms = $user -> getFilmsNotRender();
+        $currentFilms = $user->getFilmsNotRender();
 
         $filmsQuery = $filmRepository->findAllQuery('runtime', $search);
         $pagination = $paginator->paginate(
@@ -106,10 +107,35 @@ class UserController extends AbstractController
     /**
      * @Route("/add/{id}", name="user_add_film")
      */
-    public function add($id, FilmRepository $filmRepository): Response
+    public function add($id, FilmRepository $filmRepository, Request $request, PaginatorInterface $paginator, ParamsRepository $paramRepo): Response
     {
 
         $user = $this->getUser();
+        $params = $paramRepo->find(1);
+
+        if ($user->isMaxBorrow($paramRepo)) {
+            $message = 'Vous avez atteint le nombre maximum d\'emprunts possibles ('.$params->getMaxBorrowByUser().'); pour emprunter à nouveau, vous devez rendre des films';
+            $search = new FilmSearch();
+            $form = $this->createForm(FilmSearchType::class, $search);
+            $form->handleRequest($request);
+
+            $currentFilms = $user->getFilmsNotRender();
+
+            $filmsQuery = $filmRepository->findAllQuery('year', $search);
+            $pagination = $paginator->paginate(
+                $filmsQuery,
+                $request->query->getInt('page', 1),
+                3
+            );
+            return $this->render('user/index.html.twig', [
+                'pagination' => $pagination,
+                'user' => $user,
+                'form' => $form->createView(),
+                'currentFilms' => $currentFilms,
+                'message' => $message
+            ]);
+        }
+
         $cart = $user->getActiveCart();
 
         if (is_null($cart)) {
@@ -118,6 +144,29 @@ class UserController extends AbstractController
             $user->addCart($cart);
             $this->getDoctrine()->getManager()->persist($cart);
             $this->getDoctrine()->getManager()->flush();
+        }
+
+        if ($cart->getFilms()->count() >= $params->getMaxFilmByBorrow()){
+            $message = 'Vous avez atteint le nombre maximum de films pour un emprunt ('.$params->getMaxFilmByBorrow().')';
+            $search = new FilmSearch();
+            $form = $this->createForm(FilmSearchType::class, $search);
+            $form->handleRequest($request);
+
+            $currentFilms = $user->getFilmsNotRender();
+
+            $filmsQuery = $filmRepository->findAllQuery('year', $search);
+            $pagination = $paginator->paginate(
+                $filmsQuery,
+                $request->query->getInt('page', 1),
+                3
+            );
+            return $this->render('user/index.html.twig', [
+                'pagination' => $pagination,
+                'user' => $user,
+                'form' => $form->createView(),
+                'currentFilms' => $currentFilms,
+                'message' => $message
+            ]);
         }
 
         $selectFilm = $filmRepository->find($id);
@@ -178,21 +227,23 @@ class UserController extends AbstractController
     /**
      * @Route("/cart/validation", name="cart_validation")
      */
-    public function validation(): Response
+    public function validation(ParamsRepository $paramsRepo): Response
     {
         $user = $this->getUser();
         $cart = $user->getActiveCart();
         $cart->setIsActive(false);
 
+        $params = $paramsRepo->find(1);
+
         $films = $cart->getFilms();
         $borrow = new Borrow();
         $borrow->setUser($user);
-        
+
         $dateStart = new DateTime('now');
-        $dateFinish = $dateStart->add(new DateInterval('P3D'));
+        $dateFinish = $dateStart->add(new DateInterval('P'.$params->getBorrowLenght().'D'));
         $borrow->setDateFinish($dateFinish);
 
-        foreach ($films as $film){
+        foreach ($films as $film) {
             $user->addFilmsNotRender($film);
             $borrow->addFilm($film);
         }
@@ -224,7 +275,7 @@ class UserController extends AbstractController
      */
     public function detail($id, BorrowRepository $borrowRepo): Response
     {
-        $borrow = $borrowRepo -> find($id);
+        $borrow = $borrowRepo->find($id);
         return $this->render('user/history-detail.html.twig', [
             'borrow' => $borrow
         ]);
@@ -242,10 +293,10 @@ class UserController extends AbstractController
         $user->removeFilmsNotRender($film);
         $user->addFilm($film);
         $quantity = $film->getQuantity();
-        $film->setQuantity($quantity+=1);
+        $film->setQuantity($quantity += 1);
         $user->addFilm($film);
         $manager = $this->getDoctrine()->getManager();
         $manager->flush();
-        return $this->redirectToRoute('history_detail', ['id'=>$borrow->getId()]);
+        return $this->redirectToRoute('history_detail', ['id' => $borrow->getId()]);
     }
 }
