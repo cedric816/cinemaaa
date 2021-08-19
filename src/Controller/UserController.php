@@ -2,12 +2,15 @@
 
 namespace App\Controller;
 
+use App\Entity\Borrow;
 use App\Entity\Cart;
 use App\Entity\Film;
 use App\Entity\FilmSearch;
 use App\Form\FilmSearchType;
-use App\Repository\CartRepository;
+use App\Repository\BorrowRepository;
 use App\Repository\FilmRepository;
+use DateInterval;
+use DateTime;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -182,11 +185,20 @@ class UserController extends AbstractController
         $cart->setIsActive(false);
 
         $films = $cart->getFilms();
+        $borrow = new Borrow();
+        $borrow->setUser($user);
+        
+        $dateStart = new DateTime('now');
+        $dateFinish = $dateStart->add(new DateInterval('P3D'));
+        $borrow->setDateFinish($dateFinish);
+
         foreach ($films as $film){
             $user->addFilmsNotRender($film);
+            $borrow->addFilm($film);
         }
 
         $manager = $this->getDoctrine()->getManager();
+        $manager->persist($borrow);
         $manager->flush();
         return $this->redirectToRoute('user_index');
     }
@@ -199,31 +211,34 @@ class UserController extends AbstractController
         $user = $this->getUser();
         $carts = $user->getCarts();
 
+        $borrows = $user->getBorrows();
+
         return $this->render('user/history.html.twig', [
-            'carts' => $carts
+            'carts' => $carts,
+            'borrows' => $borrows
         ]);
     }
 
     /**
      * @Route("/history/{id}", name="history_detail")
      */
-    public function detail($id, CartRepository $cartRepo): Response
+    public function detail($id, BorrowRepository $borrowRepo): Response
     {
-        $cart = $cartRepo->find($id);
+        $borrow = $borrowRepo -> find($id);
         return $this->render('user/history-detail.html.twig', [
-            'cart' => $cart
+            'borrow' => $borrow
         ]);
     }
 
     /**
-     * @Route("return/{idCart}/{idFilm}", name="return_film")
+     * @Route("return/{idBorrow}/{idFilm}", name="return_film")
      */
-    public function return($idCart, $idFilm, CartRepository $cartRepo, FilmRepository $filmrepo): Response
+    public function return($idBorrow, $idFilm, BorrowRepository $borrowRepo, FilmRepository $filmrepo): Response
     {
         $user = $this->getUser();
-        $cart = $cartRepo->find($idCart);
+        $borrow = $borrowRepo->find($idBorrow);
         $film = $filmrepo->find($idFilm);
-        $cart->removeFilm($film);
+        $borrow->removeFilm($film);
         $user->removeFilmsNotRender($film);
         $user->addFilm($film);
         $quantity = $film->getQuantity();
@@ -231,6 +246,6 @@ class UserController extends AbstractController
         $user->addFilm($film);
         $manager = $this->getDoctrine()->getManager();
         $manager->flush();
-        return $this->redirectToRoute('history_detail', ['id'=>$cart->getId()]);
+        return $this->redirectToRoute('history_detail', ['id'=>$borrow->getId()]);
     }
 }

@@ -30,27 +30,46 @@
 		<h5>Mon historique</h5>
 	</div>
 
-	<div class="container mt-5">
+	{# <div class="container mt-5">
 		<ul class="list-group">
 			{% for cart in carts  %}
-				{% if cart.isActive %}
-				{# if current cart => not display #}
-					{% else %}
-						<li class="list-group-item">
-							<strong>Réservation n°{{cart.id}} -
-								<span>Statut: Validé
-								</span>
-							</strong>
-							{% if cart.films|length %}
-								<p>⛔ Il reste des films à rendre</p>
-								<div class="col-md-6 d-flex">
-									<a class="btn btn-primary" href={{ path('history_detail', {'id': cart.id} ) }}>détail</a>
-								</div>
-							{% else %}
-								<p>☑️ Tous les films ont été rendus</p>
-							{% endif %}
-						</li>
+				{% if cart.isActive %} #}
+					{# if current cart => not display #}
+				{# {% else %}
+					<li class="list-group-item">
+						<strong>Réservation n°{{cart.id}}
+							-
+							<span>Statut: Validé
+							</span>
+						</strong>
+						{% if cart.films|length %}
+							<p>⛔ Il reste des films à rendre</p>
+							<div class="col-md-6 d-flex">
+								<a class="btn btn-primary" href={{ path('history_detail', {'id': cart.id} ) }}>détail</a>
+							</div>
+						{% else %}
+							<p>☑️ Tous les films ont été rendus</p>
+						{% endif %}
+					</li>
 				{% endif %}
+			{% endfor %}
+		</ul>
+	</div> #}
+
+	<div class="container mt-5">
+		<ul class="list-group">
+			{% for borrow in borrows  %}
+				<li class="list-group-item">
+					<p><strong>Emprunt n°{{borrow.id}}</strong></p>
+					{% if borrow.films|length %}
+						<p>⛔ Il reste des films à rendre</p>
+						<div class="col-md-6 d-flex">
+							<a class="btn btn-primary" href={{ path('history_detail', {'id': borrow.id} ) }}>détail</a>
+						</div>
+					{% else %}
+						<p>☑️ Tous les films ont été rendus</p>
+					{% endif %}
+				</li>
 			{% endfor %}
 		</ul>
 	</div>

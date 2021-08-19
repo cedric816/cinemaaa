@@ -27,10 +27,10 @@
 	</nav>
 
 	<div class="container mt-5">
-		<h5>Détail de la réservation n°{{cart.id}}</h5>
+		<h5>Détail de la réservation n°{{borrow.id}}</h5>
 	</div>
 
-	<div class="container mt-5">
+	{# <div class="container mt-5">
 		<ul class="list-group">
 			{% for film in cart.films  %}
 				<li class="list-group-item">
@@ -47,6 +47,30 @@
 						</div>
 						<div>
 							<a href={{ path('return_film', {'idCart':cart.id, 'idFilm':film.id} ) }} class="btn btn-success" onclick="return confirm('Etes-ous sûr de vouloir rendre {{film.title}}?');">Rendre ce film</a>
+						</div>
+					</div>
+				</li>
+			{% endfor %}
+		</ul>
+	</div> #}
+
+	<div class="container mt-5">
+		<ul class="list-group">
+			{% for film in borrow.films  %}
+				<li class="list-group-item">
+
+					<div class="d-flex justify-content-between">
+						<div>
+							<img src={{film.poster}} alt="affiche du film" height="80px">
+						</div>
+						<div>
+							<strong>{{film.title}}</strong>
+							<p>{{film.year}}
+								-
+								{{film.director}}</p>
+						</div>
+						<div>
+							<a href={{ path('return_film', {'idBorrow':borrow.id, 'idFilm':film.id} ) }} class="btn btn-success" onclick="return confirm('Etes-ous sûr de vouloir rendre {{film.title}}?');">Rendre ce film</a>
 						</div>
 					</div>
 				</li>

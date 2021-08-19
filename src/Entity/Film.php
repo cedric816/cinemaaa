@@ -79,11 +79,17 @@ class Film
      */
     private $startQuantity;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Borrow::class, mappedBy="films")
+     */
+    private $borrows;
+
     public function __construct()
     {
         $this->carts = new ArrayCollection();
         $this->users = new ArrayCollection();
         $this->currentUsers = new ArrayCollection();
+        $this->borrows = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -274,6 +280,33 @@ class Film
     public function setStartQuantity(int $startQuantity): self
     {
         $this->startQuantity = $startQuantity;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Borrow[]
+     */
+    public function getBorrows(): Collection
+    {
+        return $this->borrows;
+    }
+
+    public function addBorrow(Borrow $borrow): self
+    {
+        if (!$this->borrows->contains($borrow)) {
+            $this->borrows[] = $borrow;
+            $borrow->addFilm($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBorrow(Borrow $borrow): self
+    {
+        if ($this->borrows->removeElement($borrow)) {
+            $borrow->removeFilm($this);
+        }
 
         return $this;
     }

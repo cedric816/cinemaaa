@@ -39,14 +39,29 @@
 	<div class="container mt-5">
 		<p class="bg-primary text-white">liste des utilisateurs ayant un emprunt en cours pour ce film:</p>
 		<ul class="list-group">
-			{% for oneUser in allUsers %}
-				{% for oneFilm in oneUser.FilmsNotRender %}
-					{% if oneFilm.id == film.id %}
-						<li class="list-group-item">
-						{{oneUser.name}} - {{oneUser.email}}
-						</li>
-					{% endif %}
-				{% endfor %}
+			{% for borrow in borrows %}
+				{% if  borrow.dateFinish < date()%}
+					<li class="list-group-item">
+						<p class="text-danger">
+							{{borrow.user.name}}
+							-
+							{{borrow.user.email}}
+							-  à rendre pour le:
+							{{borrow.dateFinish|date("d/m/Y")}}<span>
+								-
+								<a href="#" class="btn btn-danger">Contacter l'utilisateur</a>
+							</span>
+						</p>
+					</li>
+				{% else %}
+					<li class="list-group-item bg-success">
+						{{borrow.user.name}}
+						-
+						{{borrow.user.email}}
+						- à rendre pour le:
+						{{borrow.dateFinish|date("d/m/Y")}}
+					</li>
+				{% endif %}
 			{% endfor %}
 		</ul>
 	</div>

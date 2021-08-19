@@ -75,19 +75,22 @@ class AdminController extends AbstractController
     }
 
     /**
-     * @Route("/info/{id}", name="info_film")
+     * @Route("/info/film/{id}", name="info_film")
      */
     public function info($id, FilmRepository $filmRepo, UserRepository $userRepo): Response
     {
         $film = $filmRepo->find($id);
         $users = $film->getUsers();
 
+        $borrows = $film->getBorrows();
+
         $allUsers = $userRepo->findAll();
 
         return $this->render('admin/info-film.html.twig', [
             'film' => $film,
             'users' => $users,
-            'allUsers' => $allUsers
+            'allUsers' => $allUsers,
+            'borrows' => $borrows
         ]);
     }
 
