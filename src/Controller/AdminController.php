@@ -137,28 +137,40 @@ class AdminController extends AbstractController
             ));
 
             $response = curl_exec($curl);
-            $response = json_decode($response, true); //true en second argument indique qu'on veut un tableau associatif
 
-            $title = $response['Title'];
-            $year = $response['Year'];
-            $runtime = $response['Runtime'];
-            $director = $response['Director'];
-            $poster = $response['Poster'];
-            $plot = $response['Plot'];
+            //true en second argument indique qu'on veut un tableau associatif
+            $response = json_decode($response, true);
 
-            $film = new Film();
-            $film->setTitle($title);
-            $film->setYear(intval($year));
-            $film->setRuntime(intval($runtime));
-            $film->setDirector($director);
-            $film->setPoster($poster);
-            $film->setPlot($plot);
+            if ($response['Response']==="True") {
+                $title = $response['Title'];
+                $year = $response['Year'];
+                $runtime = $response['Runtime'];
+                $director = $response['Director'];
+                $poster = $response['Poster'];
+                $plot = $response['Plot'];
 
-            curl_close($curl);
+                $film = new Film();
+                $film->setTitle($title);
+                $film->setYear(intval($year));
+                $film->setRuntime(intval($runtime));
+                $film->setDirector($director);
+                $film->setPoster($poster);
+                $film->setPlot($plot);
 
-            $this->container->get('session')->set('film', $film);
-            return $this->redirectToRoute('confirm_new_film');
+                curl_close($curl);
+
+                $this->container->get('session')->set('film', $film);
+                return $this->redirectToRoute('confirm_new_film');
+            } else {
+                $message ='Aucun résultat';
+                return $this->render('admin/new-film.html.twig', [
+                    'form' => $form->createView(),
+                    'message' => $message
+                ]);
+            }
         }
+
+
 
 
 

@@ -40,18 +40,24 @@
 			</form>
 		</div>
 	</div>
+	<div class="container mt-3">
+		<div class="d-flex justify-content-center">
+			<p>Pas encore enregistré?
+			<a href={{ path('user_registration') }}>Créer un compte</a></p>
+		</div>
+	</div>
 
 
 	{#
-					        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
-					        See https://symfony.com/doc/current/security/remember_me.html
-					
-					        <div class="checkbox mb-3">
-					            <label>
-					                <input type="checkbox" name="_remember_me"> Remember me
-					            </label>
-					        </div>
-					    #}
+						        Uncomment this section and add a remember_me option below your firewall to activate remember me functionality.
+						        See https://symfony.com/doc/current/security/remember_me.html
+						
+						        <div class="checkbox mb-3">
+						            <label>
+						                <input type="checkbox" name="_remember_me"> Remember me
+						            </label>
+						        </div>
+						    #}
 
 
 {% endblock %}
