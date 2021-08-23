@@ -19,9 +19,9 @@ class LoginCheckController extends AbstractController
         $user = $this->getUser();
         $role = $user->getRoles();
         $role = $role[0];
-        if ($role === "ROLE_USER"){
+        if ($role === "ROLE_USER") {
             return $this->redirectToRoute("user_index");
-        } elseif ($role === "ROLE_ADMIN"){
+        } elseif ($role === "ROLE_ADMIN") {
             return $this->redirectToRoute("admin_index");
         }
     }

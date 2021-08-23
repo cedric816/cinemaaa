@@ -12,7 +12,7 @@ class FilmSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder      
+        $builder
             ->add('keyWord', TextType::class, [
                 'label' => false,
                 'attr' => [

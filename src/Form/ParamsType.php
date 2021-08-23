@@ -14,8 +14,7 @@ class ParamsType extends AbstractType
         $builder
             ->add('maxFilmByBorrow', null, [
                 'label' => 'Nombre de films maximum par emprunt'
-                ]
-            )
+                ])
             ->add('maxBorrowByUser', null, [
                 'label' => 'Nombre d\'emprunts maximum par utilisateur'
                 ])

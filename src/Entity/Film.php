@@ -220,9 +220,10 @@ class Film
         return $this;
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return $this->getCarts();
-      }
+    }
 
     /**
      * @return Collection|User[]
@@ -310,5 +311,4 @@ class Film
 
         return $this;
     }
-
 }
