@@ -5,17 +5,15 @@ use App\Form\UserType;
 use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Mime\Email;
 
 class RegistrationController extends AbstractController
 {
     /**
      * @Route("/register", name="user_registration")
      */
-    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder, MailerInterface $mailer)
+    public function register(Request $request, UserPasswordHasherInterface $passwordEncoder)
     {
         // 1) build the form
         $user = new User();
@@ -38,18 +36,18 @@ class RegistrationController extends AbstractController
 
             // ... do any other work - like sending them an email, etc
             // maybe set a "flash" success message for the user
-            $email = (new Email())
-            ->from('hello@example.com')
-            ->to($user->getEmail())
+            // $email = (new Email())
+            // ->from('hello@example.com')
+            // ->to($user->getEmail())
             //->cc('cc@example.com')
             //->bcc('bcc@example.com')
             //->replyTo('fabien@example.com')
             //->priority(Email::PRIORITY_HIGH)
-            ->subject('Votre compte Cinemaaa')
+            // ->subject('Votre compte Cinemaaa')
             // ->text('Sending emails is fun again!')
-            ->html('<p>Votre compte est maintenant actif :)!</p>');
+            // ->html('<p>Votre compte est maintenant actif :)!</p>');
 
-            $mailer->send($email);
+            // $mailer->send($email);
 
             return $this->redirectToRoute('user_index');
         }
