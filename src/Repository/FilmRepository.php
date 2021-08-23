@@ -23,23 +23,23 @@ class FilmRepository extends ServiceEntityRepository
 
     public function findAllQuery($key, FilmSearch $search)
     {
-        if ($search->getKeyWord()){
+        if ($search->getKeyWord()) {
             return $this->createQueryBuilder('f')
             ->andWhere('f.available = :val')
             ->andWhere('f.quantity > 0')
             ->andWhere('f.title LIKE :key OR f.plot LIKE :key')
             ->setParameter('val', true)
-            ->setParameter('key', '%'.$search->getKeyWord().'%')
-            ->orderBy('f.'.$key, 'ASC')
+            ->setParameter('key', '%' . $search->getKeyWord() . '%')
+            ->orderBy('f.' . $key, 'ASC')
             ->getQuery();
         } else {
             return $this->createQueryBuilder('f')
             ->andWhere('f.available = :val')
             ->andWhere('f.quantity > 0')
             ->setParameter('val', true)
-            ->orderBy('f.'.$key, 'ASC')
+            ->orderBy('f.' . $key, 'ASC')
             ->getQuery();
-        }   
+        }
     }
 
     public function findLatest()

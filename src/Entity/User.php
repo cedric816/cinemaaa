@@ -354,15 +354,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $borrows = $this->getBorrows();
         $count = 0;
 
-        foreach ($borrows as $borrow){
-            if ($borrow->getFilms()->count() > 0){
-                $count ++;
+        foreach ($borrows as $borrow) {
+            if ($borrow->getFilms()->count() > 0) {
+                $count++;
             }
         }
 
-        if ($count >= $params->getMaxBorrowByUser()){
+        if ($count >= $params->getMaxBorrowByUser()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }

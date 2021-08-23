@@ -141,7 +141,7 @@ class AdminController extends AbstractController
             //true en second argument indique qu'on veut un tableau associatif
             $response = json_decode($response, true);
 
-            if ($response['Response']==="True") {
+            if ($response['Response'] === "True") {
                 $title = $response['Title'];
                 $year = $response['Year'];
                 $runtime = $response['Runtime'];
@@ -162,7 +162,7 @@ class AdminController extends AbstractController
                 $this->container->get('session')->set('film', $film);
                 return $this->redirectToRoute('confirm_new_film');
             } else {
-                $message ='Aucun résultat';
+                $message = 'Aucun résultat';
                 return $this->render('admin/new-film.html.twig', [
                     'form' => $form->createView(),
                     'message' => $message
