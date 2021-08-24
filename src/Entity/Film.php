@@ -6,6 +6,7 @@ use App\Repository\FilmRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=FilmRepository::class)
@@ -21,31 +22,37 @@ class Film
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("film:read")
      */
     private $title;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups("film:read")
      */
     private $year;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups("film:read")
      */
     private $runtime;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups("film:read")
      */
     private $director;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups("film:read")
      */
     private $poster;
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups("film:read")
      */
     private $plot;
 
