@@ -4,5 +4,3 @@
 #table 'film_user' concerne les emprunts rendus
 #table 'borrow' pour la gestion des dates de retour des emprunts
 
-#A FAIRE
-#nouveau film depuis API: gestion film non trouvé
